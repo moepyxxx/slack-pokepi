@@ -1,4 +1,6 @@
 import { Client } from "@notionhq/client"
+import moment from 'moment'
+
 const env = process.env
 
 class OwnPokemon {
@@ -12,6 +14,7 @@ class OwnPokemon {
   }
 
   async create(userName, pokemonId) {
+    const now = moment().utc().utcOffset("+0900").format()
     try {
       await this.notion.pages.create({
         parent: {
@@ -39,6 +42,11 @@ class OwnPokemon {
           },
           pokemon_id: {
             number: pokemonId
+          },
+          created_at: {
+            date: {
+              start: now,
+            }
           },
         },
       });
