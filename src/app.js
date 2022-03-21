@@ -32,10 +32,44 @@ app.message('pokemon', async ({ _, say }) => {
               "image_url": imageUrl,
               "alt_text": name
             }
+          }, {
+            "type": "actions",
+            "elements": [
+              {
+                "type": "button",
+                "text": {
+                  "type": "plain_text",
+                  "emoji": true,
+                  "text": "MonsterBall"
+                },
+                "style": "primary",
+                "action_id": "monster_ball"
+              },
+              {
+                "type": "button",
+                "text": {
+                  "type": "plain_text",
+                  "emoji": true,
+                  "text": "GiveFood"
+                },
+                "style": "primary",
+                "action_id": "give_food"
+              }
+            ]
           }
         ]
       });
     })
+});
+
+app.action('monster_ball', async ({ body, ack, say }) => {
+  await ack();
+  await say('Request approved 👍 monster ball!');
+});
+
+app.action('give_food', async ({ body, ack, say }) => {
+  await ack();
+  await say('Request approved 👍 give food!');
 });
 
 (async () => {
