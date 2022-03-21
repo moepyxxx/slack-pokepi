@@ -1,4 +1,5 @@
 import { HOUEN_MAX_ZUKAN_NO, HOUEN_MIN_ZUKAN_NO } from "../constant";
+import OwnPokemon from "../model/ownPokemon";
 import PokemonModel from "../model/pokemon";
 import PokemonView from "../view/pokemon";
 import PokeApi from "./pokeApi";
@@ -6,6 +7,7 @@ import PokeApi from "./pokeApi";
 class PokemonController {
 
   view;
+  ownPokemon;
   pokeApi;
 
   /**
@@ -16,6 +18,7 @@ class PokemonController {
   constructor(say) {
     this.view = new PokemonView();
     this.pokeApi = new PokeApi();
+    this.ownPokemon = new OwnPokemon();
 
     this.say = say;
   }
@@ -33,11 +36,12 @@ class PokemonController {
     ));
   }
 
-  async throwMonsterBall(pokemonId) {
+  async throwMonsterBall(userId, pokemonId) {
     const pokemon = await this.pokeApi.getPokemon(pokemonId);
     this.pokemon = new PokemonModel(pokemon);
+    await this.ownPokemon.create(userId, this.pokemon.id)
 
-    await this.say(`Request approved 👍 monster ball hit ${this.pokemon.name} !!!`);
+    await this.say(`Request approved 👍 monster ball hit ${this.pokemon.name} & get !!!`);
   }
 
   async giveFood(pokemonId) {

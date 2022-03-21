@@ -15,12 +15,13 @@ app.message('pokemon', async ({ _, say }) => {
   await pokemon.appearWildPokemon()
 });
 
-app.action('monster_ball', async ({ action, ack, say }) => {
+app.action('monster_ball', async ({ body, action, ack, say }) => {
   const pokemon = new PokemonController(say);
   await ack();
   
   const pokemonId = Number(action.value);
-  await pokemon.throwMonsterBall(pokemonId);
+  const userId = body.user.id;
+  await pokemon.throwMonsterBall(userId, pokemonId);
 });
 
 app.action('give_food', async ({ action, ack, say }) => {
