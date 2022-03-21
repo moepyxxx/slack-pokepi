@@ -1,6 +1,6 @@
 import Bolt from '@slack/bolt'
 import 'dotenv/config'
-import axios from 'axios'
+import PokemonController from './controller/pokemon'
 
 const { App } = Bolt
 const env = process.env
@@ -11,65 +11,24 @@ const app = new App({
 });
 
 app.message('pokemon', async ({ _, say }) => {
-  const min = 252;
-  const max = 386;
-  const random = Math.floor( Math.random() * (max + 1 - min) ) + min ;
-
-  await axios.get(`https://pokeapi.co/api/v2/pokemon/${random}`)
-    .then(({data}) => {
-      const name = data.name;
-      const imageUrl = data.sprites.front_default
-      say({
-        "blocks": [
-          {
-            "type": "section",
-            "text": {
-              "type": "mrkdwn",
-              "text": `Appear ${name} !`
-            },
-            "accessory": {
-              "type": "image",
-              "image_url": imageUrl,
-              "alt_text": name
-            }
-          }, {
-            "type": "actions",
-            "elements": [
-              {
-                "type": "button",
-                "text": {
-                  "type": "plain_text",
-                  "emoji": true,
-                  "text": "MonsterBall"
-                },
-                "style": "primary",
-                "action_id": "monster_ball"
-              },
-              {
-                "type": "button",
-                "text": {
-                  "type": "plain_text",
-                  "emoji": true,
-                  "text": "GiveFood"
-                },
-                "style": "primary",
-                "action_id": "give_food"
-              }
-            ]
-          }
-        ]
-      });
-    })
+  const pokemon = new PokemonController(say);
+  await pokemon.appearWildPokemon()
 });
 
-app.action('monster_ball', async ({ body, ack, say }) => {
+app.action('monster_ball', async ({ action, ack, say }) => {
+  const pokemon = new PokemonController(say);
   await ack();
-  await say('Request approved 👍 monster ball!');
+  
+  const pokemonId = Number(action.value);
+  await pokemon.throwMonsterBall(pokemonId);
 });
 
-app.action('give_food', async ({ body, ack, say }) => {
+app.action('give_food', async ({ action, ack, say }) => {
+  const pokemon = new PokemonController(say);
   await ack();
-  await say('Request approved 👍 give food!');
+
+  const pokemonId = Number(action.value);
+  await pokemon.giveFood(pokemonId);
 });
 
 (async () => {
