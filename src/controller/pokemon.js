@@ -37,18 +37,31 @@ class PokemonController {
   }
 
   async throwMonsterBall(userId, pokemonId) {
+
     const pokemon = await this.pokeApi.getPokemon(pokemonId);
     this.pokemon = new PokemonModel(pokemon);
-    await this.ownPokemon.create(userId, this.pokemon.id)
 
-    await this.say(`Request approved 👍 monster ball hit ${this.pokemon.name} & get !!!`);
+    const isPokemonGet = this.checkIsPokemonGet();
+    if (isPokemonGet) {
+      await this.ownPokemon.create(userId, this.pokemon.id)
+      await this.say(`monster ball hit ${this.pokemon.name} & get ${this.pokemon.name} 👍`);
+
+    } else {
+      await this.say(`oh, so close! We were so close...🥺  ${this.pokemon.name} have escaped...`)
+
+    }
   }
 
   async giveFood(pokemonId) {
     const pokemon = await this.pokeApi.getPokemon(pokemonId);
     this.pokemon = new PokemonModel(pokemon);
     
-    await this.say(`Request approved 👍 ${this.pokemon.name} eat food !!!`);
+    await this.say(`${this.pokemon.name} eat food 🍙 !!!`);
+  }
+
+  checkIsPokemonGet() {
+    const random = Math.random();
+    return random < 0.5;
   }
 }
 export default PokemonController;
